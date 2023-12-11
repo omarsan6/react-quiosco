@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+
 export default function Login() {
   return (
     <>
@@ -50,6 +52,15 @@ export default function Login() {
           className='bg-indigo-600 hover:bg-indigo-800 text-white w-full mt-5 p-3 uppercase font-bold cursor-pointer'/>
         </form>
       </div>
+
+      <nav className="mt-5">
+        <Link to="/auth/registro">
+          ¿No tienes cuenta? Crea una
+        </Link>
+      </nav>
+
+
+
     </>
   )
 }
