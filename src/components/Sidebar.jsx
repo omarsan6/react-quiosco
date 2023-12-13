@@ -3,7 +3,7 @@ import Categoria from "./Categoria"
 
 export default function Sidebar() {
     return (
-        <aside className="md:w-72">
+        <aside className="md:w-72 z-20">
             <div className="p-10 ">
                 <img
                     src="../../public/img/logo.svg"
@@ -14,6 +14,7 @@ export default function Sidebar() {
             <div className="mt-2">
                 {categorias.map(categoria => (
                     <Categoria 
+                        key={categoria.id}
                         categoria={categoria}    
                     />
                 ))}
