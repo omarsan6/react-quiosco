@@ -6,6 +6,8 @@ export default function Resumen() {
 
   const { pedido, total } = useQuisco();
 
+  const comprobarPedido = ( ) => pedido.length === 0;
+
   return (
     <aside className="md:w-72 h-screen overflow-y-scroll p-5 ">
       <h1 className="text-4xl font-black">
@@ -41,8 +43,15 @@ export default function Resumen() {
         <div className="mt-5">
           <input
             type="submit"
-            className='bg-indigo-600 hover:bg-indigo-800 py-2 font-bold text-white rounded uppercase text-center w-full'
+            // si comprobar pedido es verdadero
+            className={`
+              ${comprobarPedido()
+                ? 'bg-indigo-100' 
+                : 'bg-indigo-600 hover:bg-indigo-800'}
+              py-2 font-bold text-white rounded uppercase text-center w-full`}
+
             value="Confirmar pedido"
+            disabled={comprobarPedido()}
           />
         </div>
       </form>
