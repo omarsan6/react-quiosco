@@ -1,4 +1,4 @@
-import { createContext, useState } from "react"
+import { createContext, useState, useEffect } from "react"
 import { toast } from "react-toastify"
 import { categorias as categoriasDB } from "../data/categorias"
 
@@ -11,6 +11,15 @@ const QuiscoProvider = ({children}) =>{
     const [modal, setModal] = useState(false)
     const [producto, setProducto] = useState({})
     const [pedido, setPedido] = useState([])
+    const [total, setTotal] = useState(0)
+
+    //cada que pedido cambie se ejecuta useEffect
+    useEffect(() => {
+        const nuevoTotal = pedido.reduce( (total, producto) => (producto.precio * producto.cantidad) + total, 
+        0)
+        
+        setTotal(nuevoTotal)
+    },[pedido])
 
     const handleClickCategoria = id => {
         const categoria = categorias.filter(categoria => categoria.id === id)[0]
@@ -61,7 +70,8 @@ const QuiscoProvider = ({children}) =>{
             pedido,
             handleAgregarPedido,
             handleEditarCantidad,
-            handleEliminarProductoPedido
+            handleEliminarProductoPedido,
+            total
         }}>
             {children}
         </QuiscoContext.Provider>

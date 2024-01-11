@@ -4,7 +4,7 @@ import { formatearDinero } from '../helpers';
 
 export default function Resumen() {
 
-  const { pedido } = useQuisco();
+  const { pedido, total } = useQuisco();
 
   return (
     <aside className="md:w-72 h-screen overflow-y-scroll p-5 ">
@@ -34,6 +34,7 @@ export default function Resumen() {
 
       <p className='text-xl mt-10'>
         Total : {''}
+        {formatearDinero(total)}
       </p>
 
       <form className='w-full'>
