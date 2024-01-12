@@ -1,13 +1,13 @@
 import { createContext, useState, useEffect } from "react"
 import { toast } from "react-toastify"
-import { categorias as categoriasDB } from "../data/categorias"
+import clienteAxios from "../config/axios"
 
 const QuiscoContext = createContext()
 
 const QuiscoProvider = ({children}) =>{
 
-    const [categorias, setCategorias] = useState(categoriasDB)
-    const [categoriaActual, setCategoriaActual] = useState(categoriasDB[0])
+    const [categorias, setCategorias] = useState([])
+    const [categoriaActual, setCategoriaActual] = useState({})
     const [modal, setModal] = useState(false)
     const [producto, setProducto] = useState({})
     const [pedido, setPedido] = useState([])
@@ -20,6 +20,21 @@ const QuiscoProvider = ({children}) =>{
         
         setTotal(nuevoTotal)
     },[pedido])
+
+    const obtenerCategorias = async () => {
+        try{
+            const respuesta = await clienteAxios('/api/categorias')
+            const data = respuesta.data.data
+            setCategorias(data)
+            setCategoriaActual(data[0])
+        }catch(err){
+            console.log(err);
+        }
+    }
+
+    useEffect(()=>{
+        obtenerCategorias()
+    },[])
 
     const handleClickCategoria = id => {
         const categoria = categorias.filter(categoria => categoria.id === id)[0]
