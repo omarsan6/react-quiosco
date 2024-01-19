@@ -28,8 +28,8 @@ export default function Registro() {
 
     const respuesta = clienteAxios.post('/api/registro', datos)
 
-    respuesta.then(() => {
-
+    respuesta.then(response => {
+      console.log(response.data.token);
     })
     .catch(error => {
       setErrores(Object.values(error.response.data.errors));
