@@ -8,19 +8,19 @@ export const useAuth = ({ middlewere, url }) => {
     const token = localStorage.getItem('AUTH_TOKEN')
     const navigate = useNavigate()
 
-    const {data: user, error} = useSWR('/api/user', () => 
+    const { data: user, error } = useSWR('/api/user', () =>
         clienteAxios('/api/user', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         })
-        .then(res => res.data)
-        .catch(error =>{
-            throw Error(error?.response?.data?.errors)
-        })
+            .then(res => res.data)
+            .catch(error => {
+                throw Error(error?.response?.data?.errors)
+            })
     )
 
-    const login = (datos,setErrores) => {
+    const login = (datos, setErrores) => {
         const respuesta = clienteAxios.post('/api/login', datos)
 
         respuesta.then(response => {
@@ -29,13 +29,22 @@ export const useAuth = ({ middlewere, url }) => {
             //volver a llamar useSWR
             mutate()
         })
+            .catch(error => {
+                setErrores(Object.values(error.response.data.errors));
+            })
+    }
+
+    const registro = (datos, setErrores) => {
+        const respuesta = clienteAxios.post('/api/registro', datos)
+
+        respuesta.then(response => {
+            localStorage.setItem('AUTH_TOKEN', response.data.token)
+            setErrores([])
+            mutate()
+        })
         .catch(error => {
             setErrores(Object.values(error.response.data.errors));
         })
-    }
-
-    const registro = () => {
-
     }
 
     const logout = async () => {
@@ -48,22 +57,22 @@ export const useAuth = ({ middlewere, url }) => {
 
             localStorage.removeItem('AUTH_TOKEN')
             await mutate(undefined)
-            
+
         } catch (error) {
             throw Error(error?.response?.data?.errors)
         }
     }
 
     useEffect(() => {
-        if(middlewere === 'guess' && url && user){
+        if (middlewere === 'guess' && url && user) {
             navigate(url)
         }
 
-        if(middlewere === 'auth' && error){
+        if (middlewere === 'auth' && error) {
             navigate('/auth/login')
         }
 
-    }, [user,error])
+    }, [user, error])
 
     return {
         login,
