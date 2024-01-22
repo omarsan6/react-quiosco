@@ -1,14 +1,17 @@
 import { createRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import clienteAxios from '../config/axios';
 import Alerta from '../components/Alerta';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Login() {
 
   const emailRef = createRef();
   const passwordRef = createRef();
-
   const [errores, setErrores] = useState([]);
+  const {login} = useAuth({
+    middlewere: 'guess',
+    url: '/'
+  })
 
   const handleSubmit = e => {
 
@@ -19,15 +22,9 @@ export default function Login() {
       password: passwordRef.current.value,
     }
 
-    const respuesta = clienteAxios.post('/api/login', datos)
+    login(datos,setErrores)
 
-    respuesta.then(response => {
-      localStorage.setItem('AUTH_TOKEN', response.data.token)
-      setErrores([]);
-    })
-    .catch(error => {
-      setErrores(Object.values(error.response.data.errors));
-    })
+    
   }
 
   return (
