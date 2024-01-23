@@ -4,9 +4,15 @@ import { formatearDinero } from '../helpers';
 
 export default function Resumen() {
 
-  const { pedido, total } = useQuisco();
+  const { pedido, total, handleSubmitNuevaOrden } = useQuisco();
 
   const comprobarPedido = ( ) => pedido.length === 0;
+
+  const handleSubmit = e => {
+    e.preventDefault()
+
+    handleSubmitNuevaOrden()
+  }
 
   return (
     <aside className="md:w-72 h-screen overflow-y-scroll p-5 ">
@@ -39,7 +45,9 @@ export default function Resumen() {
         {formatearDinero(total)}
       </p>
 
-      <form className='w-full'>
+      <form 
+        className='w-full'
+        onSubmit={handleSubmit}>
         <div className="mt-5">
           <input
             type="submit"

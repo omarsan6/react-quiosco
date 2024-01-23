@@ -4,7 +4,7 @@ import clienteAxios from "../config/axios"
 
 const QuiscoContext = createContext()
 
-const QuiscoProvider = ({children}) =>{
+const QuiscoProvider = ({ children }) => {
 
     const [categorias, setCategorias] = useState([])
     const [categoriaActual, setCategoriaActual] = useState({})
@@ -15,26 +15,26 @@ const QuiscoProvider = ({children}) =>{
 
     //cada que pedido cambie se ejecuta useEffect
     useEffect(() => {
-        const nuevoTotal = pedido.reduce( (total, producto) => (producto.precio * producto.cantidad) + total, 
-        0)
-        
+        const nuevoTotal = pedido.reduce((total, producto) => (producto.precio * producto.cantidad) + total,
+            0)
+
         setTotal(nuevoTotal)
-    },[pedido])
+    }, [pedido])
 
     const obtenerCategorias = async () => {
-        try{
+        try {
             const respuesta = await clienteAxios('/api/categorias')
             const data = respuesta.data.data
             setCategorias(data)
             setCategoriaActual(data[0])
-        }catch(err){
+        } catch (err) {
             console.log(err);
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         obtenerCategorias()
-    },[])
+    }, [])
 
     const handleClickCategoria = id => {
         const categoria = categorias.filter(categoria => categoria.id === id)[0]
@@ -48,10 +48,10 @@ const QuiscoProvider = ({children}) =>{
     const handleSetProducto = producto => {
         setProducto(producto)
     }
-   
-    const handleAgregarPedido = ({categoria_id,...producto}) => {
-        
-        if(pedido.some(pedidoState => pedidoState.id === producto.id)) {
+
+    const handleAgregarPedido = ({ categoria_id, ...producto }) => {
+
+        if (pedido.some(pedidoState => pedidoState.id === producto.id)) {
             const pedidoActualizado = pedido.map(pedidoState => pedidoState.id === producto.id ? producto : pedidoState)
             setPedido(pedidoActualizado)
             toast.success("Guardado correctamente")
@@ -61,16 +61,48 @@ const QuiscoProvider = ({children}) =>{
         }
     }
 
-    const handleEditarCantidad = id =>{
+    const handleEditarCantidad = id => {
         const productoActualizar = pedido.filter(producto => producto.id = id)[0]
         setProducto(productoActualizar)
         setModal(!modal)
     }
 
-    const handleEliminarProductoPedido = id =>{
+    const handleEliminarProductoPedido = id => {
         const pedidoActualizado = pedido.filter(producto => producto.id !== id)
         setPedido(pedidoActualizado)
         toast.success("Eliminado del pedido")
+    }
+
+    const handleSubmitNuevaOrden = async () => {
+
+        const token = localStorage.getItem('AUTH_TOKEN')
+
+        try {
+           const {data} =  await clienteAxios.post('/api/pedidos', {
+                total, 
+                productos: pedido.map(producto => {
+                    return {
+                        id: producto.id,
+                        cantidad: producto.cantidad,
+                    }
+                }),
+
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+
+            toast.success(data.message)
+
+            setTimeout(() => {
+                setPedido([])
+            }, 1000)
+
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -86,7 +118,8 @@ const QuiscoProvider = ({children}) =>{
             handleAgregarPedido,
             handleEditarCantidad,
             handleEliminarProductoPedido,
-            total
+            total,
+            handleSubmitNuevaOrden
         }}>
             {children}
         </QuiscoContext.Provider>
@@ -95,6 +128,6 @@ const QuiscoProvider = ({children}) =>{
 
 }
 
-export {QuiscoProvider}
+export { QuiscoProvider }
 export default QuiscoContext
 
