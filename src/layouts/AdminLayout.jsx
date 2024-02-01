@@ -7,7 +7,7 @@ export default function AdminLayout() {
   useAuth({middlewere: 'admin'})
 
   return (
-    <div className='md:flex relative'>
+    <div className='md:flex relative bg-slate-50'>
         <AdminSidebar/>
 
         <main className='flex-1 h-screen overflow-y-scroll p-5'>
