@@ -22,14 +22,26 @@ const QuiscoProvider = ({ children }) => {
     }, [pedido])
 
     const obtenerCategorias = async () => {
-        try {
-            const respuesta = await clienteAxios('/api/categorias')
-            const data = respuesta.data.data
-            setCategorias(data)
-            setCategoriaActual(data[0])
-        } catch (err) {
-            console.log(err);
-        }
+        
+            // const respuesta = await clienteAxios('/api/categorias')
+            // const data = respuesta.data.data
+
+            const token = localStorage.getItem("AUTH_TOKEN")
+
+            try {
+                const {data} = await clienteAxios('/api/categorias', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+
+                setCategorias(data.data)
+                setCategoriaActual(data.data[0])
+            } catch (error) {
+                console.log(error);
+            }
+
+       
     }
 
     useEffect(() => {
@@ -105,6 +117,36 @@ const QuiscoProvider = ({ children }) => {
         }
     }
 
+    const handleClickCompletarPedido = async id => {
+
+        const token = localStorage.getItem('AUTH_TOKEN')
+
+        try {
+            await clienteAxios.put(`/api/pedidos/${id}`, null, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleClickProductoAgotado = async id => {
+
+        const token = localStorage.getItem('AUTH_TOKEN')
+
+        try {
+            await clienteAxios.put(`/api/productos/${id}`, null, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <QuiscoContext.Provider value={{
             categorias,
@@ -119,7 +161,9 @@ const QuiscoProvider = ({ children }) => {
             handleEditarCantidad,
             handleEliminarProductoPedido,
             total,
-            handleSubmitNuevaOrden
+            handleSubmitNuevaOrden,
+            handleClickCompletarPedido,
+            handleClickProductoAgotado
         }}>
             {children}
         </QuiscoContext.Provider>
